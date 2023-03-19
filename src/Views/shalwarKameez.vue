@@ -7,7 +7,7 @@
       <p>Shalwar</p>
     </div>
   </div>
-  <canvas id="c"></canvas>
+  <canvas id="c" class="canvas"></canvas>
   <div class="controls">
     <div id="js-tray" class="tray">
       <div id="js-tray-slide" class="tray__slide"></div>
@@ -24,6 +24,12 @@ import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 export default {
   name: "ShalwarKameez",
   mounted() {
+    const canvasOnDom = document.querySelectorAll(".canvas");
+    if (canvasOnDom.length  > 1){
+      canvasOnDom[0].remove();
+      console.log("hello")
+    }
+    
     const TRAY = document.getElementById("js-tray-slide");
     var activeOption = "CC_Base_Teeth2_lambert2_0";
 
@@ -187,8 +193,8 @@ export default {
     buildColors(colors);
 
     function selectOption(e) {
-      let option = e.target;
-      activeOption = e.target.dataset.option;
+      let option = e.target.closest(".option");
+      activeOption = e.target.closest(".option").dataset.option;
       for (const otherOption of options) {
         otherOption.classList.remove("--is-active");
       }
