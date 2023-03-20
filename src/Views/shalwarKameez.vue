@@ -24,11 +24,16 @@ import axios from "axios";
 
 export default {
   name: "ShalwarKameez",
+  data() {
+    return {
+      postData: [],
+    };
+  },
   mounted() {
     const canvasOnDom = document.querySelectorAll(".canvas");
     if (canvasOnDom.length > 1) {
       canvasOnDom[0].remove();
-      console.log("hello")
+      console.log("hello");
     }
 
     const TRAY = document.getElementById("js-tray-slide");
@@ -36,6 +41,7 @@ export default {
 
     // const urlParams = new URLSearchParams(window.location.search);
     // let myParam = urlParams.get('texture');
+    const colors = [];
 
     axios
       .get("https://vdesigners.herokuapp.com/api/project/getProjects")
@@ -44,45 +50,53 @@ export default {
         this.postData = response.data;
         console.log("Data is printed");
         console.log(this.postData);
+        for (let i = 0; i < this.postData.length; i++) {
+          colors.push({
+            texture: response.data[i].image[0],
+            size: [3, 3, 3],
+            shininess: 0,
+          });
+        }
 
+        console.log(colors);
 
-        const colors = [
-          {
-            texture: response.data[0].image[0],
-            size: [3, 3, 3],
-            shininess: 0,
-          },
-          {
-            texture: "/assets/flower2.jpg",
-            size: [3, 3, 3],
-            shininess: 0,
-          },
-          {
-            texture: "https://firebasestorage.googleapis.com/v0/b/vdesigners-5b906.appspot.com/o/images%2Fmoroccan-flower.jpg?alt=media&token=8716d09e-c7a5-4220-b6f5-a2bd567c5c86",
-            size: [3, 3, 3],
-            shininess: 0,
-          },
-          {
-            color: "66533C",
-          },
-          {
-            color: "173A2F",
-          },
-          {
-            color: "153944",
-          },
-          {
-            color: "7B4E5D",
-          },
-          {
-            color: "438AAC",
-          },
-          // {
-          //   texture: myParam,
-          //   size: [3, 3, 3],
-          //   shininess: 0,
-          // },
-        ];
+        // const colors = [
+        //   {
+        //     texture: response.data[0].image[0],
+        //     size: [3, 3, 3],
+        //     shininess: 0,
+        //   },
+        //   {
+        //     texture: "/assets/flower2.jpg",
+        //     size: [3, 3, 3],
+        //     shininess: 0,
+        //   },
+        //   {
+        //     texture: "https://firebasestorage.googleapis.com/v0/b/vdesigners-5b906.appspot.com/o/images%2Fmoroccan-flower.jpg?alt=media&token=8716d09e-c7a5-4220-b6f5-a2bd567c5c86",
+        //     size: [3, 3, 3],
+        //     shininess: 0,
+        //   },
+        //   {
+        //     color: "66533C",
+        //   },
+        //   {
+        //     color: "173A2F",
+        //   },
+        //   {
+        //     color: "153944",
+        //   },
+        //   {
+        //     color: "7B4E5D",
+        //   },
+        //   {
+        //     color: "438AAC",
+        //   },
+        //   // {
+        //   //   texture: myParam,
+        //   //   size: [3, 3, 3],
+        //   //   shininess: 0,
+        //   // },
+        // ];
 
         const BACKGROUND_COLOR = 0xf1f1f1;
 
@@ -276,6 +290,72 @@ export default {
       .catch((error) => {
         console.log(error);
       });
+
+    var slider = document.getElementById("js-tray"),
+      sliderItems = document.getElementById("js-tray-slide"),
+      difference;
+
+    function slide(wrapper, items) {
+      var posX1 = 0,
+        posX2 = 0,
+        posInitial,
+        threshold = 20,
+        posFinal,
+        slides = items.getElementsByClassName("tray__swatch");
+
+      // Mouse events
+      items.onmousedown = dragStart;
+
+      // Touch events
+      items.addEventListener("touchstart", dragStart);
+      items.addEventListener("touchend", dragEnd);
+      items.addEventListener("touchmove", dragAction);
+
+      function dragStart(e) {
+        e = e || window.event;
+        posInitial = items.offsetLeft;
+        difference = sliderItems.offsetWidth - slider.offsetWidth;
+        difference = difference * -1;
+
+        if (e.type == "touchstart") {
+          posX1 = e.touches[0].clientX;
+        } else {
+          posX1 = e.clientX;
+          document.onmouseup = dragEnd;
+          document.onmousemove = dragAction;
+        }
+      }
+
+      function dragAction(e) {
+        e = e || window.event;
+
+        if (e.type == "touchmove") {
+          posX2 = posX1 - e.touches[0].clientX;
+          posX1 = e.touches[0].clientX;
+        } else {
+          posX2 = posX1 - e.clientX;
+          posX1 = e.clientX;
+        }
+
+        if (items.offsetLeft - posX2 <= 0 && items.offsetLeft - posX2 >= difference) {
+          items.style.left = items.offsetLeft - posX2 + "px";
+        }
+      }
+
+      function dragEnd(e) {
+        posFinal = items.offsetLeft;
+        if (posFinal - posInitial < -threshold) {
+        } else if (posFinal - posInitial > threshold) {
+        } else {
+          items.style.left = posInitial + "px";
+        }
+
+        document.onmouseup = null;
+        document.onmousemove = null;
+      }
+    }
+
+    slide(slider, sliderItems);
   },
 };
 </script>
