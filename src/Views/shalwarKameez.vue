@@ -41,7 +41,24 @@ export default {
 
     // const urlParams = new URLSearchParams(window.location.search);
     // let myParam = urlParams.get('texture');
-    const colors = [];
+    const colors = [
+    {
+    texture: "/assets/flowers.jpg",
+    size: [2, 2, 2],
+    shininess: 60,
+  },
+  {
+    texture: "/assets/flower2.jpg",
+    size: [3, 3, 3],
+    shininess: 0,
+  },
+  {
+    color: "66533C",
+  },
+  {
+    color: "173A2F",
+  },
+    ];
 
     axios
       .get("https://vdesigners.herokuapp.com/api/project/getProjects")
