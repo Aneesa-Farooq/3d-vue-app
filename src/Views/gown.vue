@@ -18,6 +18,11 @@ import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 
 export default {
   name: "Gown",
+  data() {
+    return {
+      postData: [],
+    };
+  },
   mounted() {
     const canvasOnDom = document.querySelectorAll(".canvas");
     if (canvasOnDom.length  > 1){
@@ -27,34 +32,22 @@ export default {
     
     const TRAY = document.getElementById("js-tray-slide");
 
-    const colors = [
-      {
-        texture: "/assets/flowers.jpg",
-        size: [2, 2, 2],
-        shininess: 60,
-      },
-      {
-        texture: "/assets/flower2.jpg",
-        size: [3, 3, 3],
-        shininess: 0,
-      },
-      {
-        color: "66533C",
-      },
-      {
-        color: "173A2F",
-      },
-      {
-        color: "153944",
-      },
-      {
-        color: "27548D",
-      },
-      {
-        color: "438AAC",
-      },
-    ];
-
+    const colors = [];
+    axios
+      .get("https://vdesigners.herokuapp.com/api/project/getProjects")
+      .then((response) => {
+        console.log(response.data);
+        this.postData = response.data;
+        console.log("Data is printed");
+        console.log(this.postData);
+        for (let i = 0; i < this.postData.length; i++) {
+          colors.push({
+            texture: response.data[i].image[0],
+            size: [3, 3, 3],
+            shininess: 0,
+          });
+        } 
+      })
     const BACKGROUND_COLOR = 0xf1f1f1;
 
     // Init the scene

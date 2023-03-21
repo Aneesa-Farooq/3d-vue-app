@@ -45,46 +45,42 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
+import axios from "axios";
 
 export default {
   name: "MeshFrock",
+  data() {
+    return {
+      postData: [],
+    };
+  },
   mounted() {
     const canvasOnDom = document.querySelectorAll(".canvas");
     if (canvasOnDom.length  > 1){
       canvasOnDom[0].remove();
       console.log("hello")
     }
-    
+
     const TRAY = document.getElementById("js-tray-slide");
     var activeOption = "FO_001_Buttons_0";
 
-    const colors = [
-      {
-        texture: "/assets/flowers.jpg",
-        size: [2, 2, 2],
-        shininess: 60,
-      },
-      {
-        texture: "/assets/flower2.jpg",
-        size: [3, 3, 3],
-        shininess: 0,
-      },
-      {
-        color: "66533C",
-      },
-      {
-        color: "173A2F",
-      },
-      {
-        color: "153944",
-      },
-      {
-        color: "27548D",
-      },
-      {
-        color: "7B4E5D",
-      },
-    ];
+    const colors = [];
+    axios
+      .get("https://vdesigners.herokuapp.com/api/project/getProjects")
+      .then((response) => {
+        console.log(response.data);
+        this.postData = response.data;
+        console.log("Data is printed");
+        console.log(this.postData);
+        for (let i = 0; i < this.postData.length; i++) {
+          colors.push({
+            texture: response.data[i].image[0],
+            size: [3, 3, 3],
+            shininess: 0,
+          });
+        } 
+      })
+
 
     const BACKGROUND_COLOR = 0xf1f1f1;
 

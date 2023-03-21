@@ -59,8 +59,6 @@ export default {
         }
 
         console.log(colors);
-
-        // const colors = [
         //   {
         //     texture: response.data[0].image[0],
         //     size: [3, 3, 3],
