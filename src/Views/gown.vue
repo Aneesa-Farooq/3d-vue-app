@@ -24,9 +24,10 @@ export default {
   },
   mounted() {
     // Listen for messages from the parent window
+    console.log("changes deployed")
     window.addEventListener("message", (event) => {
       // Verify that the message is coming from the expected origin (localhost:5173)
-      if (event.origin === "https://3d-vue-app.vercel.app") {
+      if (event.origin === "http://localhost:5173/user/3D/admin/3d") {
         // Access the received message data
         const receivedData = event.data;
         console.log(receivedData);
