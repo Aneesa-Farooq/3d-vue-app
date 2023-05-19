@@ -8,6 +8,7 @@
       <div id="js-tray-slide" class="tray__slide"></div>
     </div>
   </div>
+  <button @click="storeModel">Save Model</button>
 </template>
   
 <script>
@@ -15,6 +16,9 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
+import { getStorage,getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { GLTFExporter } from "three/examples/jsm/exporters/GLTFExporter.js";
+import { storage } from "../firebase";
 import axios from "axios";
 
 export default {
@@ -22,8 +26,10 @@ export default {
   data() {
     return {
       postData: [],
-    };
+      
+      };
   },
+  theModel: null,
   mounted() {
     const canvasOnDom = document.querySelectorAll(".canvas");
     if (canvasOnDom.length  > 1){
@@ -66,6 +72,7 @@ export default {
           });
         } 
       })
+
     const BACKGROUND_COLOR = 0xf1f1f1;
 
     // Init the scene
@@ -86,9 +93,7 @@ export default {
     // Add a camera
     var camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
     camera.position.set(0, 0, 250);
-
-
-    var theModel;
+   var theModeler;
     var gltfLoader = new GLTFLoader();
 
     const INITIAL_MTL = new THREE.MeshPhongMaterial({ color: 0x808080, shininess: 10 });
@@ -106,25 +111,32 @@ export default {
         }
       });
     }
-
-    gltfLoader.load("/assets/gown/scene.gltf", function (gltf) {
-      theModel = gltf.scene;
-      theModel.position.y = -70;
+    
+    var gltfLoader = new GLTFLoader();
+    gltfLoader.load("/assets/gown/scene.gltf", (gltf) => {
+      this.theModel = gltf.scene;
+      this.theModel.position.y = -70;
+      console.log(this.theModel);
+    
+   
       // Add the model to the scene
-      theModel.traverse((o) => {
+      this.theModel.traverse((o) => {
         if (o.isMesh) {
           o.castShadow = true;
           o.receiveShadow = true;
         }
       });
+      console.log(this.theModel)
 
       // Set initial textures
       for (let object of INITIAL_MAP) {
-        initColor(theModel, object.childID, object.mtl);
+        initColor(this.theModel, object.childID, object.mtl);
       }
-      scene.add(theModel);
-    });
 
+      scene.add(this.theModel);
+     theModeler=this.theModel
+    });
+console.log(this.theModel);
     // // var light=new THREE.AmbientLight(0xffffff,0.5);
     // // scene.add(light);
     // Add lights
@@ -216,19 +228,31 @@ export default {
           shininess: color.shininess ? color.shininess : 10,
         });
       }
-
-      setMaterial(theModel, "defaultMaterial", new_mtl);
+console.log(theModeler);
+      setMaterial(theModeler, "defaultMaterial", new_mtl);
     }
 
+    // function setMaterial(parent, type, mtl) {
+    //   parent.traverse((o) => {
+    //     if (o.isMesh && o.nameID != null) {
+    //       if (o.nameID == type) {
+    //         o.material = mtl;
+    //       }
+    //     }
+    //   });
+    // }
     function setMaterial(parent, type, mtl) {
-      parent.traverse((o) => {
-        if (o.isMesh && o.nameID != null) {
-          if (o.nameID == type) {
-            o.material = mtl;
-          }
+      console.log(parent)
+  if (parent && parent.isObject3D) {
+    parent.traverse((o) => {
+      if (o.isMesh && o.nameID != null) {
+        if (o.nameID == type) {
+          o.material = mtl;
         }
-      });
-    }
+      }
+    });
+  }
+}
 
     var slider = document.getElementById("js-tray"),
       sliderItems = document.getElementById("js-tray-slide"),
@@ -295,7 +319,42 @@ export default {
     }
 
     slide(slider, sliderItems);
+   
+  },
+  methods: {
+    async storeModel() {
+      console.log(this.theModel);
+      if (!this.theModel) {
+        console.error('Model is not loaded.');
+        return;
+      }
+var gltfDataUrl='';
+      // // Convert the GLTF model to GLB format
+      // const glbBuffer = await new GLTFExporter().parseToBuffer(this.theModel);
+       // Create an instance of the GLTFExporter
+    const exporter = new GLTFExporter();
 
+// Export the GLTF model as a data URL
+exporter.parse(
+  this.theModel,
+  (result) => {
+    // Handle the exported GLTF data
+    gltfDataUrl = 'data:application/octet-stream;base64,' + btoa(result);
+    console.log('GLTF Data URL:', gltfDataUrl);
+
+    
+  },
+  { binary: true } // Optional options
+);
+const imageName = Date.now() + ".glb";
+    const storageRef = ref(storage, `models/${imageName}`);
+    const snapshot = await uploadBytes(storageRef, gltfDataUrl);
+    const downloadURL = await getDownloadURL(snapshot.ref);
+  console.log(downloadURL)
+
+      // 
+ 
+    }
   }
 }
 
