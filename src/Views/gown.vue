@@ -1,15 +1,13 @@
 <template>
-  <canvas id="c" class="canvas">
-  </canvas>
+  <canvas id="c" class="canvas"> </canvas>
 
   <div class="controls">
     <div id="js-tray" class="tray">
-
       <div id="js-tray-slide" class="tray__slide"></div>
     </div>
   </div>
 </template>
-  
+
 <script>
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
@@ -25,47 +23,56 @@ export default {
     };
   },
   mounted() {
+    // Listen for messages from the parent window
+    window.addEventListener("message", (event) => {
+      // Verify that the message is coming from the expected origin (localhost:5173)
+      if (event.origin === "http://localhost:5173/user/3D/admin/3d") {
+        // Access the received message data
+        const receivedData = event.data;
+        console.log(receivedData);
+
+        // Perform actions based on the received parameters // ...
+      }
+    });
     const canvasOnDom = document.querySelectorAll(".canvas");
-    if (canvasOnDom.length  > 1){
+    if (canvasOnDom.length > 1) {
       canvasOnDom[0].remove();
-      console.log("hello")
+      console.log("hello");
     }
-    
+
     const TRAY = document.getElementById("js-tray-slide");
 
     const colors = [
-    {
-    texture: "/assets/flowers.jpg",
-    size: [2, 2, 2],
-    shininess: 60,
-  },
-  {
-    texture: "/assets/flower2.jpg",
-    size: [3, 3, 3],
-    shininess: 0,
-  },
-  {
-    color: "66533C",
-  },
-  {
-    color: "173A2F",
-  },
+      {
+        texture: "/assets/flowers.jpg",
+        size: [2, 2, 2],
+        shininess: 60,
+      },
+      {
+        texture: "/assets/flower2.jpg",
+        size: [3, 3, 3],
+        shininess: 0,
+      },
+      {
+        color: "66533C",
+      },
+      {
+        color: "173A2F",
+      },
     ];
-    axios
-      .get("https://vdesigners.herokuapp.com/api/project/getProjects")
-      .then((response) => {
-        console.log(response.data);
-        this.postData = response.data;
-        console.log("Data is printed");
-        console.log(this.postData);
-        for (let i = 0; i < this.postData.length; i++) {
-          colors.push({
-            texture: response.data[i].image[0],
-            size: [3, 3, 3],
-            shininess: 0,
-          });
-        } 
-      })
+    axios.get("https://vdesigners.herokuapp.com/api/project/getProjects").then((response) => {
+      console.log(response.data);
+      this.postData = response.data;
+      console.log("Data is printed");
+      console.log(this.postData);
+      for (let i = 0; i < this.postData.length; i++) {
+        colors.push({
+          texture: response.data[i].image[0],
+          size: [3, 3, 3],
+          shininess: 0,
+        });
+      }
+    });
     const BACKGROUND_COLOR = 0xf1f1f1;
 
     // Init the scene
@@ -86,7 +93,6 @@ export default {
     // Add a camera
     var camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
     camera.position.set(0, 0, 250);
-
 
     var theModel;
     var gltfLoader = new GLTFLoader();
@@ -139,7 +145,6 @@ export default {
     dirLight.shadow.mapSize = new THREE.Vector2(1024, 1024);
     // Add directional Light to scene
     scene.add(dirLight);
-
 
     var orbit = new OrbitControls(camera, renderer.domElement);
     orbit.update();
@@ -295,8 +300,6 @@ export default {
     }
 
     slide(slider, sliderItems);
-
-  }
-}
-
+  },
+};
 </script>
