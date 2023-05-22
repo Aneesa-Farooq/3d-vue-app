@@ -309,6 +309,7 @@ export default {
               const snapshot=await uploadBytes(storageRef,url)
               const downloadUrl=await getDownloadURL(snapshot.ref)
               console.log(downloadUrl);
+              localStorage.setItem("finalUrl", downloadUrl);
               saveArrayBuffer(gltf, 'model1.glb')
             },
             { binary: true }
@@ -328,7 +329,10 @@ export default {
         }
         const saveValue = document.querySelector("#save")
         if (saveValue) {
-          saveValue.addEventListener("click", store);
+          saveValue.addEventListener("click", () => {
+            store();
+            this.$router.push({ name: "ar" });
+          });
         }
       })
       .catch((error) => {

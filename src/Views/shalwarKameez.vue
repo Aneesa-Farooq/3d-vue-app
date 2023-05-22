@@ -306,6 +306,7 @@ export default {
           });
         }
         async function store() {
+          let downloadUrl;
           console.log(scene);
           const exporter = new GLTFExporter();
           exporter.parse(
@@ -317,12 +318,14 @@ export default {
               const filename=Date.now() + ".glb";
               const storageRef=ref(storage,`models/${filename}`)
               const snapshot=await uploadBytes(storageRef,url)
-              const downloadUrl=await getDownloadURL(snapshot.ref)
+              downloadUrl=await getDownloadURL(snapshot.ref)
               console.log(downloadUrl);
+              localStorage.setItem("finalUrl", downloadUrl);
               saveArrayBuffer(gltf, 'model1.glb')
             },
             { binary: true }
           );
+          return (downloadUrl)
         }
         function saveArrayBuffer(buffer, filename) {
           save(new Blob([buffer], { type: 'apllication/octet-stream' }), filename)
@@ -338,7 +341,13 @@ export default {
         }
         const saveValue = document.querySelector("#save")
         if (saveValue) {
-          saveValue.addEventListener("click", store);
+          saveValue.addEventListener("click", () => {
+            let url=store();
+            console.log(22222222222, url)
+            if (url){
+              this.$router.push({ name: "ar" });
+            }
+          });
         }
       })
       .catch((error) => {

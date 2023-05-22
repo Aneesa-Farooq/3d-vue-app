@@ -24,13 +24,11 @@ export default {
   data() {
     return {
       postData: [],
+      finalUrl: "",
+      
     };
   },
   mounted() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const param1 = urlParams.get("data");
-    console.log(param1); // Output: "value1"
-
     const canvasOnDom = document.querySelectorAll(".canvas");
     if (canvasOnDom.length > 1) {
       canvasOnDom[0].remove();
@@ -245,10 +243,11 @@ export default {
               const storageRef=ref(storage,`models/${filename}`)
               const snapshot=await uploadBytes(storageRef,url)
               const downloadUrl=await getDownloadURL(snapshot.ref)
+              localStorage.setItem("finalUrl", downloadUrl);
               console.log(downloadUrl);
               saveArrayBuffer(gltf, 'model1.glb')
             },
-            { binary: true }
+            { binary: true } 
           );
         }
         function saveArrayBuffer(buffer, filename) {
@@ -265,7 +264,10 @@ export default {
         }
         const saveValue = document.querySelector("#save")
         if (saveValue) {
-          saveValue.addEventListener("click", store);
+          saveValue.addEventListener("click", () => {
+            store();
+            this.$router.push({ name: "ar" });
+          });
         }
       })
       .catch((error) => {
