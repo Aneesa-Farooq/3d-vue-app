@@ -30,6 +30,9 @@
     <div class="option" data-option="BTM_001_Back_Buttons_0">
       <p>Back Flare</p>
     </div>
+    <div>
+      <button id="save">View in AR</button>
+    </div>
   </div>
 
   <canvas id="c" class="canvas"></canvas>
@@ -37,7 +40,6 @@
     <div id="js-tray" class="tray">
       <div id="js-tray-slide" class="tray__slide"></div>
     </div>
-    <button id="save">Save Model</button>
   </div>
 </template>
 
@@ -48,8 +50,8 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 import { GLTFExporter } from "three/examples/jsm/exporters/GLTFExporter.js";
 import axios from "axios";
-import {db,storage} from "../firebase"
-import {ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { db, storage } from "../firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 export default {
   name: "MeshFrock",
   data() {
@@ -303,31 +305,31 @@ export default {
             async function (result) {
               console.log(result);
               const gltf = JSON.stringify(result);
-              const url=new Blob([gltf], { type: 'apllication/octet-stream' })
-              const filename=Date.now() + ".glb";
-              const storageRef=ref(storage,`models/${filename}`)
-              const snapshot=await uploadBytes(storageRef,url)
-              const downloadUrl=await getDownloadURL(snapshot.ref)
+              const url = new Blob([gltf], { type: "apllication/octet-stream" });
+              const filename = Date.now() + ".glb";
+              const storageRef = ref(storage, `models/${filename}`);
+              const snapshot = await uploadBytes(storageRef, url);
+              const downloadUrl = await getDownloadURL(snapshot.ref);
               console.log(downloadUrl);
               localStorage.setItem("finalUrl", downloadUrl);
-              saveArrayBuffer(gltf, 'model1.glb')
+              saveArrayBuffer(gltf, "model1.glb");
             },
             { binary: true }
           );
         }
         function saveArrayBuffer(buffer, filename) {
-          save(new Blob([buffer], { type: 'apllication/octet-stream' }), filename)
+          save(new Blob([buffer], { type: "apllication/octet-stream" }), filename);
         }
-        const link = document.createElement('a')
-        document.body.appendChild(link)
+        const link = document.createElement("a");
+        document.body.appendChild(link);
         function save(blob, filename) {
-          link.href = URL.createObjectURL(blob)
-        //  storeLink(link.href);
+          link.href = URL.createObjectURL(blob);
+          //  storeLink(link.href);
           console.log(link.href);
-          link.download = filename
+          link.download = filename;
           link.click();
         }
-        const saveValue = document.querySelector("#save")
+        const saveValue = document.querySelector("#save");
         if (saveValue) {
           saveValue.addEventListener("click", () => {
             store();

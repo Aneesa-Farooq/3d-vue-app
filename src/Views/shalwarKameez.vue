@@ -6,13 +6,14 @@
     <div class="option" data-option="CC_Base_Teeth2_lambert3_0">
       <p>Shalwar</p>
     </div>
+    <div>
+      <button id="save">View in AR</button></div>
   </div>
   <canvas id="c" class="canvas"></canvas>
   <div class="controls">
     <div id="js-tray" class="tray">
       <div id="js-tray-slide" class="tray__slide"></div>
     </div>
-    <button id="save">Save Model</button>
   </div>
 </template>
 
@@ -23,8 +24,8 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 import { GLTFExporter } from "three/examples/jsm/exporters/GLTFExporter.js";
 import axios from "axios";
-import {db,storage} from "../firebase"
-import {ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { db, storage } from "../firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 export default {
   name: "ShalwarKameez",
@@ -46,22 +47,22 @@ export default {
     // const urlParams = new URLSearchParams(window.location.search);
     // let myParam = urlParams.get('texture');
     const colors = [
-    {
-    texture: "/assets/flowers.jpg",
-    size: [2, 2, 2],
-    shininess: 60,
-  },
-  {
-    texture: "/assets/flower2.jpg",
-    size: [3, 3, 3],
-    shininess: 0,
-  },
-  {
-    color: "66533C",
-  },
-  {
-    color: "173A2F",
-  },
+      {
+        texture: "/assets/flowers.jpg",
+        size: [2, 2, 2],
+        shininess: 60,
+      },
+      {
+        texture: "/assets/flower2.jpg",
+        size: [3, 3, 3],
+        shininess: 0,
+      },
+      {
+        color: "66533C",
+      },
+      {
+        color: "173A2F",
+      },
     ];
 
     axios
@@ -314,39 +315,36 @@ export default {
             async function (result) {
               console.log(result);
               const gltf = JSON.stringify(result);
-              const url=new Blob([gltf], { type: 'apllication/octet-stream' })
-              const filename=Date.now() + ".glb";
-              const storageRef=ref(storage,`models/${filename}`)
-              const snapshot=await uploadBytes(storageRef,url)
-              downloadUrl=await getDownloadURL(snapshot.ref)
+              const url = new Blob([gltf], { type: "apllication/octet-stream" });
+              const filename = Date.now() + ".glb";
+              const storageRef = ref(storage, `models/${filename}`);
+              const snapshot = await uploadBytes(storageRef, url);
+              downloadUrl = await getDownloadURL(snapshot.ref);
               console.log(downloadUrl);
               localStorage.setItem("finalUrl", downloadUrl);
-              saveArrayBuffer(gltf, 'model1.glb')
+              saveArrayBuffer(gltf, "model1.glb");
             },
             { binary: true }
           );
-          return (downloadUrl)
+         
         }
         function saveArrayBuffer(buffer, filename) {
-          save(new Blob([buffer], { type: 'apllication/octet-stream' }), filename)
+          save(new Blob([buffer], { type: "apllication/octet-stream" }), filename);
         }
-        const link = document.createElement('a')
-        document.body.appendChild(link)
+        const link = document.createElement("a");
+        document.body.appendChild(link);
         function save(blob, filename) {
-          link.href = URL.createObjectURL(blob)
-        //  storeLink(link.href);
+          link.href = URL.createObjectURL(blob);
+          //  storeLink(link.href);
           console.log(link.href);
-          link.download = filename
+          link.download = filename;
           link.click();
         }
-        const saveValue = document.querySelector("#save")
+        const saveValue = document.querySelector("#save");
         if (saveValue) {
           saveValue.addEventListener("click", () => {
-            let url=store();
-            console.log(22222222222, url)
-            if (url){
-              this.$router.push({ name: "ar" });
-            }
+            store();
+            this.$router.push({ name: "ar" }); 
           });
         }
       })
