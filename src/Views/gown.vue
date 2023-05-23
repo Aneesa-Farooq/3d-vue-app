@@ -234,6 +234,10 @@ export default {
             }
           });
         }
+
+        const navigateToArEvent = new Event("navigate-to-ar");
+        const saveValue = document.querySelector("#save");
+
         async function store() {
           console.log(scene);
           const exporter = new GLTFExporter();
@@ -249,7 +253,8 @@ export default {
               const downloadUrl = await getDownloadURL(snapshot.ref);
               localStorage.setItem("finalUrl", downloadUrl);
               console.log(downloadUrl);
-              saveArrayBuffer(gltf, "model1.glb");
+              await saveArrayBuffer(gltf, "model1.glb");
+              saveValue.dispatchEvent(navigateToArEvent);
             },
             { binary: true }
           );
@@ -266,10 +271,12 @@ export default {
           link.download = filename;
           link.click();
         }
-        const saveValue = document.querySelector("#save");
         if (saveValue) {
-          saveValue.addEventListener("click", () => {
-            store();
+          saveValue.addEventListener("click", async () => {
+            await store();
+          });
+          saveValue.addEventListener("navigate-to-ar", () => {
+            console.log("navigating to ar");
             this.$router.push({ name: "ar" });
           });
         }

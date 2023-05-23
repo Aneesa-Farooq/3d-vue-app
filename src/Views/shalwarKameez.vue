@@ -7,7 +7,8 @@
       <p>Shalwar</p>
     </div>
     <div>
-      <button id="save">View in AR</button></div>
+      <button id="save">View in AR</button>
+    </div>
   </div>
   <canvas id="c" class="canvas"></canvas>
   <div class="controls">
@@ -306,6 +307,10 @@ export default {
             }
           });
         }
+
+        const navigateToArEvent = new Event("navigate-to-ar");
+        const saveValue = document.querySelector("#save");
+
         async function store() {
           let downloadUrl;
           console.log(scene);
@@ -322,13 +327,14 @@ export default {
               downloadUrl = await getDownloadURL(snapshot.ref);
               console.log(downloadUrl);
               localStorage.setItem("finalUrl", downloadUrl);
-              saveArrayBuffer(gltf, "model1.glb");
+              await saveArrayBuffer(gltf, "model1.glb");
+              saveValue.dispatchEvent(navigateToArEvent);
             },
             { binary: true }
           );
-         
+
         }
-        function saveArrayBuffer(buffer, filename) {
+        async function saveArrayBuffer(buffer, filename) {
           save(new Blob([buffer], { type: "apllication/octet-stream" }), filename);
         }
         const link = document.createElement("a");
@@ -340,11 +346,14 @@ export default {
           link.download = filename;
           link.click();
         }
-        const saveValue = document.querySelector("#save");
+
         if (saveValue) {
-          saveValue.addEventListener("click", () => {
-            store();
-            this.$router.push({ name: "ar" }); 
+          saveValue.addEventListener("click", async () => {
+            await store();
+          });
+          saveValue.addEventListener("navigate-to-ar", () => {
+            console.log("navigating to ar");
+            this.$router.push({ name: "ar" });
           });
         }
       })
