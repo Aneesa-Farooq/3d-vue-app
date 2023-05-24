@@ -1,11 +1,16 @@
 <template>
   <canvas id="c" class="canvas"> </canvas>
 
+  <div class="options">
+    <div>
+      <button id="save">View in AR</button>
+    </div>
+  </div>
+
   <div class="controls">
     <div id="js-tray" class="tray">
       <div id="js-tray-slide" class="tray__slide"></div>
     </div>
-    <button id="save">Save Model</button>
   </div>
 </template>
 
@@ -16,21 +21,18 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 import { GLTFExporter } from "three/examples/jsm/exporters/GLTFExporter.js";
 import axios from "axios";
-import {db,storage} from "../firebase"
-import {ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { db, storage } from "../firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 export default {
   name: "Gown",
   data() {
     return {
       postData: [],
+      finalUrl: "",
     };
   },
   mounted() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const param1 = urlParams.get("data");
-    console.log(param1); // Output: "value1"
-
     const canvasOnDom = document.querySelectorAll(".canvas");
     if (canvasOnDom.length > 1) {
       canvasOnDom[0].remove();
@@ -231,7 +233,11 @@ export default {
               }
             }
           });
-        }        
+        }
+
+        const navigateToArEvent = new Event("navigate-to-ar");
+        const saveValue = document.querySelector("#save");
+
         async function store() {
           console.log(scene);
           const exporter = new GLTFExporter();
@@ -240,32 +246,39 @@ export default {
             async function (result) {
               console.log(result);
               const gltf = JSON.stringify(result);
-              const url=new Blob([gltf], { type: 'apllication/octet-stream' })
-              const filename=Date.now() + ".glb";
-              const storageRef=ref(storage,`models/${filename}`)
-              const snapshot=await uploadBytes(storageRef,url)
-              const downloadUrl=await getDownloadURL(snapshot.ref)
+              const url = new Blob([gltf], { type: "apllication/octet-stream" });
+              const filename = Date.now() + ".glb";
+              const storageRef = ref(storage, `models/${filename}`);
+              const snapshot = await uploadBytes(storageRef, url);
+              const downloadUrl = await getDownloadURL(snapshot.ref);
+              localStorage.setItem("finalUrl", downloadUrl);
               console.log(downloadUrl);
-              saveArrayBuffer(gltf, 'model1.glb')
+              await saveArrayBuffer(gltf, "model1.glb");
+              saveValue.dispatchEvent(navigateToArEvent);
             },
             { binary: true }
           );
         }
         function saveArrayBuffer(buffer, filename) {
-          save(new Blob([buffer], { type: 'apllication/octet-stream' }), filename)
+          save(new Blob([buffer], { type: "apllication/octet-stream" }), filename);
         }
-        const link = document.createElement('a')
-        document.body.appendChild(link)
+        const link = document.createElement("a");
+        document.body.appendChild(link);
         function save(blob, filename) {
-          link.href = URL.createObjectURL(blob)
-        //  storeLink(link.href);
+          link.href = URL.createObjectURL(blob);
+          //  storeLink(link.href);
           console.log(link.href);
-          link.download = filename
+          link.download = filename;
           link.click();
         }
-        const saveValue = document.querySelector("#save")
         if (saveValue) {
-          saveValue.addEventListener("click", store);
+          saveValue.addEventListener("click", async () => {
+            await store();
+          });
+          saveValue.addEventListener("navigate-to-ar", () => {
+            console.log("navigating to ar");
+            this.$router.push({ name: "ar" });
+          });
         }
       })
       .catch((error) => {

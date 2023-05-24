@@ -1,6 +1,6 @@
 <!-- Navigation.vue -->
 <template>
-    <nav>
+    <nav class="z-50">
         <ul class="nav-links">
             <li v-for="(item, index) in navItems" :key="index">
                 <router-link :to="item.path">{{ item.name }}</router-link>
@@ -8,7 +8,7 @@
         </ul>
     </nav>
 </template>
-  
+
 <script>
 export default {
     name: "SideNavigation",
@@ -25,7 +25,7 @@ export default {
     },
 };
 </script>
-  
+
 <style scoped>
 nav {
     background-color: #fff;
@@ -37,7 +37,6 @@ nav {
     display: flex;
     align-items: center;
 }
-
 
 .nav-links {
     list-style: none;
@@ -53,5 +52,8 @@ nav {
     font-size: 1.2rem;
     letter-spacing: .5px;
 }
+
+.z-50 {
+    z-index: 50;
+}
 </style>
-  
