@@ -1,11 +1,13 @@
 <template>
   <canvas id="c" class="canvas"> </canvas>
 
-  <div class="options">
+  <div class="options close z-50">
+    <a href="javascript:void(0)" class="close-btn sm-d" @click="closeNav">×</a>
     <div>
       <button id="save">View in AR</button>
     </div>
   </div>
+  <button class="open-btn sm-d" @click="openNav">☰ Menu</button>
 
   <div class="controls">
     <div id="js-tray" class="tray">
@@ -351,5 +353,54 @@ export default {
 
     slide(slider, sliderItems);
   },
+  methods: {
+        openNav() {
+            document.querySelector(".options").classList.remove("close");
+        },
+        closeNav() {
+            document.querySelector(".options").classList.add("close");
+        },
+    },
 };
 </script>
+
+<style scoped>
+.close-btn {
+    text-decoration: none;
+    color: black;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 2rem !important;
+    cursor: pointer;
+}
+
+.open-btn {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    font-size: 1.2rem !important;
+    cursor: pointer;
+}
+
+.close {
+    transform: translateX(0);
+}
+
+.z-50 {
+    z-index: 50;
+}
+
+.sm-d {
+    display: none;
+}
+@media (max-width:750px) {
+  .sm-d {
+    display: block;
+  }
+  .close {
+      transform: translateX(-100%);
+  }
+}
+
+</style>
