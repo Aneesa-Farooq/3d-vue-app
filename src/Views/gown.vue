@@ -231,7 +231,7 @@ export default {
               }
             }
           });
-        }
+        }        
         async function store() {
           console.log(scene);
           const exporter = new GLTFExporter();
