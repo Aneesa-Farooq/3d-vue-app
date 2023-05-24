@@ -1,12 +1,14 @@
 <!-- Navigation.vue -->
 <template>
-    <nav class="z-50">
-        <ul class="nav-links">
-            <li v-for="(item, index) in navItems" :key="index">
+    <nav class="z-50 close">
+        <div class="nav-links">
+            <a href="javascript:void(0)" class="close-btn" @click="closeNav">×</a>
+            <div v-for="(item, index) in navItems" :key="index">
                 <router-link :to="item.path">{{ item.name }}</router-link>
-            </li>
-        </ul>
+            </div>
+        </div>
     </nav>
+    <button class="open-btn" @click="openNav">☰ Items</button>
 </template>
 
 <script>
@@ -15,13 +17,22 @@ export default {
     data() {
         return {
             navItems: [
-                { name: "Gown", path: "/" },
-                { name: "ShalwarKameez", path: "/shalwarKameez" },
+
+                { name: "ShalwarKameez", path: "/" },
                 { name: "MeshFrock", path: "/meshFrock" },
                 { name: "Kameez", path: "/kameez" },
                 { name: "ShortFrock", path: "/shortFrock" },
+                { name: "Gown", path: "/gown" },
             ],
         };
+    },
+    methods: {
+        openNav() {
+            document.querySelector("nav").classList.remove("close");
+        },
+        closeNav() {
+            document.querySelector("nav").classList.add("close");
+        },
     },
 };
 </script>
@@ -36,6 +47,23 @@ nav {
     padding: 3rem 2rem;
     display: flex;
     align-items: center;
+    transition: all 0.5s ease-in-out;
+}
+.close-btn{
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    font-size: 2rem !important;
+    cursor: pointer;
+}
+
+.open-btn{
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.2rem !important;
+    cursor: pointer;
+    z-index: 49;
 }
 
 .nav-links {
@@ -56,4 +84,9 @@ nav {
 .z-50 {
     z-index: 50;
 }
+
+.close{
+    transform: translateX(100%);
+}
+
 </style>
