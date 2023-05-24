@@ -35,7 +35,7 @@ export default {
   mounted() {
     const canvasOnDom = document.querySelectorAll(".canvas");
     if (canvasOnDom.length > 1) {
-      canvasOnDom[0].remove();
+      canvasOnDom[0].parentNode.removeChild(canvasOnDom[0]);
       console.log("hello");
     }
 
@@ -234,56 +234,57 @@ export default {
             }
           });
         }
+  //      window.addEventListener("click", handleMouseClick);
+        // const navigateToArEvent = new Event("navigate-to-ar");
+        // const saveValue = document.querySelector("#save");
 
-        const navigateToArEvent = new Event("navigate-to-ar");
-        const saveValue = document.querySelector("#save");
-
-        async function store() {
-          console.log(scene);
-          const exporter = new GLTFExporter();
-          exporter.parse(
-            scene,
-            async function (result) {
-              console.log(result);
-              const gltf = JSON.stringify(result);
-              const url = new Blob([gltf], { type: "apllication/octet-stream" });
-              const filename = Date.now() + ".glb";
-              const storageRef = ref(storage, `models/${filename}`);
-              const snapshot = await uploadBytes(storageRef, url);
-              const downloadUrl = await getDownloadURL(snapshot.ref);
-              localStorage.setItem("finalUrl", downloadUrl);
-              console.log(downloadUrl);
-              await saveArrayBuffer(gltf, "model1.glb");
-              saveValue.dispatchEvent(navigateToArEvent);
-            },
-            { binary: true }
-          );
-        }
-        function saveArrayBuffer(buffer, filename) {
-          save(new Blob([buffer], { type: "apllication/octet-stream" }), filename);
-        }
-        const link = document.createElement("a");
-        document.body.appendChild(link);
-        function save(blob, filename) {
-          link.href = URL.createObjectURL(blob);
-          //  storeLink(link.href);
-          console.log(link.href);
-          link.download = filename;
-          link.click();
-        }
-        if (saveValue) {
-          saveValue.addEventListener("click", async () => {
-            await store();
-          });
-          saveValue.addEventListener("navigate-to-ar", () => {
-            console.log("navigating to ar");
-            this.$router.push({ name: "ar" });
-          });
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+        // async function store() {
+        //   console.log(scene);
+        //   const exporter = new GLTFExporter();
+        //   exporter.parse(
+        //     scene,
+        //     async function (result) {
+        //       console.log(result);
+        //       const gltf = JSON.stringify(result);
+        //       const url = new Blob([gltf], { type: "apllication/octet-stream" });
+        //       const filename = Date.now() + ".glb";
+        //       const storageRef = ref(storage, `models/${filename}`);
+        //       const snapshot = await uploadBytes(storageRef, url);
+        //       const downloadUrl = await getDownloadURL(snapshot.ref);
+        //       localStorage.setItem("finalUrl", downloadUrl);
+        //       console.log(downloadUrl);
+        //       // const link = document.createElement("a");
+        //       // document.body.appendChild(link);
+        //    //   await saveArrayBuffer(gltf, "model1.glb");
+        //       saveValue.dispatchEvent(navigateToArEvent);
+        //     },
+        //     { binary: true }
+        //   );
+        // }
+        // const navigateToArEvent = new Event("navigate-to-ar");
+        // const saveValue = document.querySelector("#save");
+        // function saveArrayBuffer(buffer, filename) {
+        //   save(new Blob([buffer], { type: "apllication/octet-stream" }), filename);
+        // }
+      
+        // function save(blob, filename) {
+        //   link.href = URL.createObjectURL(blob);
+        //   //  storeLink(link.href);
+        //   console.log(link.href);
+        //   link.download = filename;
+        //   link.click();
+        // }
+        // if (saveValue) {
+        //   saveValue.addEventListener("click", async () => {
+        //     await store();
+        //     this.$router.push({ name: "ar" });
+        //   });
+        //   // saveValue.addEventListener("navigate-to-ar", () => {
+        //   //   console.log("navigating to ar");
+        //   //   this.$router.push({ name: "ar" });
+        //   // });
+        // }
+     
 
     var slider = document.getElementById("js-tray"),
       sliderItems = document.getElementById("js-tray-slide"),
@@ -350,6 +351,11 @@ export default {
     }
 
     slide(slider, sliderItems);
+  })
+      .catch((error) => {
+        console.log(error);
+      });
   },
+  
 };
 </script>
