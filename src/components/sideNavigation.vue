@@ -15,11 +15,12 @@ export default {
     data() {
         return {
             navItems: [
-                { name: "Gown", path: "/" },
-                { name: "ShalwarKameez", path: "/shalwarKameez" },
+                
+                { name: "ShalwarKameez", path: "/" },
                 { name: "MeshFrock", path: "/meshFrock" },
                 { name: "Kameez", path: "/kameez" },
                 { name: "ShortFrock", path: "/shortFrock" },
+                { name: "Gown", path: "/gown" },
             ],
         };
     },

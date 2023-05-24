@@ -8,12 +8,12 @@ import AR from "./Views/AR.vue"
 
 const routes = [
   {
-    path: "/",
+    path: "/gown",
     component: Gown,
     name:"Gown"
   },
   {
-    path: "/shalwarKameez",
+    path: "/",
     component:ShalwarKameez ,
     name:"ShalwarKameez"
   },

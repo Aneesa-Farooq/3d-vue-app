@@ -31,7 +31,7 @@
       <p>Back Flare</p>
     </div>
     <div>
-      <button id="save">View in AR</button>
+      <button id="save"><span class="spinner-border spinner-border-sm display" role="status" aria-hidden="true"></span>View in AR</button>
     </div>
   </div>
 
@@ -85,6 +85,15 @@ export default {
       },
       {
         color: "173A2F",
+      },
+      {
+        color: "153944",
+      },
+      {
+        color: "7B4E5D",
+      },
+      {
+        color: "438AAC",
       },
     ];
     axios
@@ -336,10 +345,20 @@ export default {
         }
         if (saveValue) {
           saveValue.addEventListener("click", async () => {
+
+            const saveBtn = document.querySelector("#save");
+            saveBtn.disabled = true;
+            saveBtn.querySelector("span").classList.remove("display");
+
             await store();
           });
           saveValue.addEventListener("navigate-to-ar", () => {
             console.log("navigating to ar");
+
+            const saveBtn = document.querySelector("#save");
+            saveBtn.disabled = false;
+            saveBtn.querySelector("span").classList.add("display");
+
             this.$router.push({ name: "ar" });
           });
         }

@@ -7,7 +7,7 @@
       <p>Shalwar</p>
     </div>
     <div>
-      <button id="save">View in AR</button>
+      <button id="save"><span class="spinner-border spinner-border-sm display" role="status" aria-hidden="true"></span>View in AR</button>
     </div>
   </div>
   <canvas id="c" class="canvas"></canvas>
@@ -64,6 +64,15 @@ export default {
       {
         color: "173A2F",
       },
+      {
+        color: "153944",
+      },
+      {
+        color: "7B4E5D",
+      },
+      {
+        color: "438AAC",
+      },
     ];
 
     axios
@@ -82,42 +91,6 @@ export default {
         }
 
         console.log(colors);
-        //   {
-        //     texture: response.data[0].image[0],
-        //     size: [3, 3, 3],
-        //     shininess: 0,
-        //   },
-        //   {
-        //     texture: "/assets/flower2.jpg",
-        //     size: [3, 3, 3],
-        //     shininess: 0,
-        //   },
-        //   {
-        //     texture: "https://firebasestorage.googleapis.com/v0/b/vdesigners-5b906.appspot.com/o/images%2Fmoroccan-flower.jpg?alt=media&token=8716d09e-c7a5-4220-b6f5-a2bd567c5c86",
-        //     size: [3, 3, 3],
-        //     shininess: 0,
-        //   },
-        //   {
-        //     color: "66533C",
-        //   },
-        //   {
-        //     color: "173A2F",
-        //   },
-        //   {
-        //     color: "153944",
-        //   },
-        //   {
-        //     color: "7B4E5D",
-        //   },
-        //   {
-        //     color: "438AAC",
-        //   },
-        //   // {
-        //   //   texture: myParam,
-        //   //   size: [3, 3, 3],
-        //   //   shininess: 0,
-        //   // },
-        // ];
 
         const BACKGROUND_COLOR = 0xf1f1f1;
 
@@ -332,7 +305,6 @@ export default {
             },
             { binary: true }
           );
-
         }
         async function saveArrayBuffer(buffer, filename) {
           save(new Blob([buffer], { type: "apllication/octet-stream" }), filename);
@@ -349,10 +321,17 @@ export default {
 
         if (saveValue) {
           saveValue.addEventListener("click", async () => {
+            const saveBtn = document.querySelector("#save");
+            saveBtn.disabled = true;
+            saveBtn.querySelector("span").classList.remove("display");
             await store();
           });
           saveValue.addEventListener("navigate-to-ar", () => {
             console.log("navigating to ar");
+            const saveBtn = document.querySelector("#save");
+            saveBtn.disabled = false;
+            saveBtn.querySelector("span").classList.add("display");
+
             this.$router.push({ name: "ar" });
           });
         }
@@ -429,3 +408,47 @@ export default {
   },
 };
 </script>
+
+<style>
+@-webkit-keyframes spinner-border {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spinner-border {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.spinner-border {
+  display: inline-block;
+  width: 2rem;
+  height: 2rem;
+  vertical-align: -0.125em;
+  border: 0.25em solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  -webkit-animation: 0.75s linear infinite spinner-border;
+  animation: 0.75s linear infinite spinner-border;
+}
+
+.spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+  border-width: 0.2em;
+  margin-right: 0.25rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner-border,
+  .spinner-grow {
+    -webkit-animation-duration: 1.5s;
+    animation-duration: 1.5s;
+  }
+}
+
+.display {
+  display: none;
+}
+</style>
